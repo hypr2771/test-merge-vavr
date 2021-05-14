@@ -4,9 +4,10 @@ In this repo we try to exhibit an issue with `@JsonMerge` using `vavr-jackson` l
 
 ### Case
 
-Merging `src/test/resources/parent.json` with `src/test/resources/to_merge.json` should provide
-something _similar_ (list merging is subject to debate, and order might be different) to
-`src/test/resources/result.json`.
+Merging [`parent.json`](src/test/resources/parent.json) with
+[`to_merge.json`](src/test/resources/to_merge.json) should provide something _similar_ (list merging
+is subject to debate, and order might be different) to
+[`result.json`](src/test/resources/result.json).
 
 We are actually getting a:
 
@@ -107,4 +108,5 @@ Process finished with exit code 255
 
 ### Running
 
-You can simply `mvn verify`, or run manually `net.vince.merge.test.ParentTest.test`.
+You can simply `mvn verify`, or run manually
+[`net.vince.merge.test.ParentTest.test`](src/test/java/net/vince/merge/test/ParentTest.java).
