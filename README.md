@@ -5,27 +5,33 @@ In this repo we try to exhibit an issue with `@JsonMerge` using `vavr-jackson` l
 ### Case
 
 Merging [`parent.json`](src/test/resources/parent.json) with
-[`to_merge.json`](src/test/resources/to_merge.json) should provide something _similar_ (list merging
-is subject to debate, and order might be different) to
+[`to_merge.json`](src/test/resources/to_merge.json) should result in
 [`result.json`](src/test/resources/result.json).
 
-We are actually getting a:
+We are actually getting [`to_merge.json`](src/test/resources/to_merge.json).
+
+### Unit tests
+
+Running [`ParentJavaTest.test`](src/test/java/net/vince/merge/test/ParentJavaTest.java) runs 
+successfully, while [`ParentVavrTest.test`](src/test/java/net/vince/merge/test/ParentVavrTest.java)
+fails:
 
 <details>
-<summary><code>com.fasterxml.jackson.databind.JsonMappingException</code></summary>
+<summary><code>org.opentest4j.AssertionFailedError</code></summary>
 
 ```log
-com.fasterxml.jackson.databind.JsonMappingException: Problem deserializing property 'list' (expected type: [collection-like type; class io.vavr.collection.List, contains [simple type, class java.lang.String]]; actual type: io.vavr.collection.List$Cons), problem: object is not an instance of declaring class
- at [Source: (String)"{"list":["first","third"],"map":{"first_key":"first_value","third_key":"third_value"},"deepMap":{"first_key":{"first_nested_key":"first_nested_value"},"third_key":{"third_nested_key":"third_nested_value"}}}"; line: 1, column: 25] (through reference chain: net.vince.merge.test.Parent["list"])
+org.opentest4j.AssertionFailedError: 
+Expected :ParentVavr(list=List(first, third), map=HashMap((third_key, third_value), (first_key, first_overridden_value)), deepMap=HashMap((third_key, HashMap((third_nested_key, third_nested_value))), (first_key, HashMap((first_overridden_nested_key, first_overridden_nested_value)))), child=ParentVavr.Child(name=overridden_name, description=original_description))
+Actual   :ParentVavr(list=List(first, third), map=HashMap((third_key, third_value), (first_key, first_overridden_value), (second_key, second_value)), deepMap=HashMap((third_key, HashMap((third_nested_key, third_nested_value))), (first_key, HashMap((first_nested_key, first_nested_value), (first_overridden_nested_key, first_overridden_nested_value))), (second_key, HashMap((second_nested_key, second_nested_value)))), child=ParentVavr.Child(name=overridden_name, description=original_description))
+<Click to see difference>
 
-	at com.fasterxml.jackson.databind.JsonMappingException.from(JsonMappingException.java:223)
-	at com.fasterxml.jackson.databind.deser.SettableBeanProperty._throwAsIOE(SettableBeanProperty.java:516)
-	at com.fasterxml.jackson.databind.deser.impl.MethodProperty.deserializeSetAndReturn(MethodProperty.java:112)
-	at com.fasterxml.jackson.databind.deser.BuilderBasedDeserializer._deserialize(BuilderBasedDeserializer.java:228)
-	at com.fasterxml.jackson.databind.deser.BuilderBasedDeserializer.deserialize(BuilderBasedDeserializer.java:187)
-	at com.fasterxml.jackson.databind.ObjectReader._bindAndClose(ObjectReader.java:1577)
-	at com.fasterxml.jackson.databind.ObjectReader.readValue(ObjectReader.java:1200)
-	at net.vince.merge.test.ParentTest.test(ParentTest.java:49)
+
+	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
+	at org.junit.jupiter.api.AssertionUtils.failNotEqual(AssertionUtils.java:62)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:177)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1124)
+	at net.vince.merge.test.ParentVavrTest.test(ParentVavrTest.java:108)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -91,17 +97,6 @@ com.fasterxml.jackson.databind.JsonMappingException: Problem deserializing prope
 	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:33)
 	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:221)
 	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:54)
-Caused by: java.lang.IllegalArgumentException: object is not an instance of declaring class
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:564)
-	at com.fasterxml.jackson.databind.deser.impl.MethodProperty.deserializeSetAndReturn(MethodProperty.java:109)
-	... 70 more
-
-Class transformation time: 0.024385779s for 1435 classes or 1.6993574216027874E-5s per class
-
-Process finished with exit code 255
 ```
 
 </details>
@@ -109,4 +104,4 @@ Process finished with exit code 255
 ### Running
 
 You can simply `mvn verify`, or run manually
-[`net.vince.merge.test.ParentTest.test`](src/test/java/net/vince/merge/test/ParentTest.java).
+[`ParentVavrTest.test`](src/test/java/net/vince/merge/test/ParentVavrTest.java).

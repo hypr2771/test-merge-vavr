@@ -14,5 +14,9 @@
     "second_key": {
       "second_nested_key": "second_nested_value"
     }
+  },
+  "child": {
+    "name": "original_name",
+    "description": "original_description"
   }
 }
